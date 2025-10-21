@@ -2,6 +2,7 @@
 using Common.Message;
 using Common.Config;
 using CommunityToolkit.Mvvm.Messaging;
+using SearchObject;
 
 namespace Sequence
 {
@@ -12,12 +13,14 @@ namespace Sequence
     {
         private readonly Log _log;
         private readonly DataYaml _yamlData;
+        private readonly MLModel _model;
 
-        public Flow(Log log, DataYaml dataYaml)
+        public Flow(Log log, DataYaml dataYaml, MLModel model)
         {
             WeakReferenceMessenger.Default.RegisterAll(this);
             _log = log;
             _yamlData = dataYaml;
+            _model = model;
         }
 
         public async void Receive(MainWindowRenderedMessage message)
@@ -26,6 +29,8 @@ namespace Sequence
             {
                 //do init
                 await _yamlData.LoadAsync();
+                await _model.LoadModelAsync("MLModel1.mlnet");
+
 
                 //SampleTest();
             }

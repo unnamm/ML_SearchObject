@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:UI.View"
+             xmlns:component="clr-namespace:UI.ComponentView"
+             xmlns:converter="clr-namespace:UI.Converter"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -14,17 +16,22 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Background="LightGray">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
+            <RowDefinition Height="3*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Grid.Row="0" Text="MaterialDesignBody1TextBlock" Style="{StaticResource MaterialDesignBody1TextBlock}"/>
-            <TextBlock Grid.Row="0" Text="MaterialDesignBody2TextBlock" Style="{StaticResource MaterialDesignBody2TextBlock}"/>
-            <TextBlock Grid.Row="0" Text="MaterialDesignButtonTextBlock" Style="{StaticResource MaterialDesignButtonTextBlock}"/>
-            <TextBlock Grid.Row="0" Text="MaterialDesignCaptionTextBlock" Style="{StaticResource MaterialDesignCaptionTextBlock}"/>
-        </StackPanel>
+
+        <Grid Grid.Row="0">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="LoadImage" Width="200" Command="{Binding LoadImageCommand}"/>
+                    <Button Content="RunPredict" Width="200" Command="{Binding RunPredictCommand}"/>
+                    <TextBlock Text="{Binding LoadedImage, Converter={converter:PathToFileName}}"/>
+                </StackPanel>
+                <component:ImageViewer ImageSource="{Binding ImageData}" Background="Black" Cursor="Hand" Stretch="UniformToFill"/>
+            </StackPanel>
+        </Grid>
 
         <ListView Grid.Row="1" ItemsSource="{Binding LogInstance.LogList}" Background="Transparent"/>
     </Grid>

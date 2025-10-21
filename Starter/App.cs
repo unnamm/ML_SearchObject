@@ -1,9 +1,6 @@
-﻿using Common;
-using Common.Config;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Sequence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,16 +27,19 @@ namespace Starter
             var builder = Host.CreateApplicationBuilder();
             _servicesCollection = builder.Services;
 
-            #region add
-            _servicesCollection.AddSingleton<Log>();
-            _servicesCollection.AddSingleton<Flow>();
-            _servicesCollection.AddSingleton<DataYaml>();
+            //add function
+            _servicesCollection.AddSingleton<Common.Log>();
+            _servicesCollection.AddSingleton<Sequence.Flow>();
+            _servicesCollection.AddSingleton<SearchObject.MLModel>();
+            _servicesCollection.AddSingleton<Common.Config.DataYaml>();
+
+            //add view
             _servicesCollection.AddSingleton<DialogView>();
 
+            //add view, viewmodel
             AddViewAndViewModel<ContentView, ContentViewModel>(true);
             AddViewAndViewModel<SettingView, SettingViewModel>(true);
             AddViewAndViewModel<MainWindowView, MainWindowViewModel>();
-            #endregion
 
             _serviceProvider = builder.Build().Services;
             Ioc.Default.ConfigureServices(_serviceProvider);
@@ -47,7 +47,7 @@ namespace Starter
             _mainView = _serviceProvider.GetService<MainWindowView>()!;
 
             AutoConnectViewAndViewModel();
-            _serviceProvider.GetService<Flow>(); //make instance, receive message
+            _serviceProvider.GetService<Sequence.Flow>(); //make instance, receive message
             _serviceProvider.GetService<DialogView>(); //make instance, receive message
 
             Startup += (x, y) => _mainView.Show(); //mainwindow show
