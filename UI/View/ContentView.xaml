@@ -20,19 +20,31 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="LoadImage" Width="200" Command="{Binding LoadImageCommand}"/>
-                    <Button Content="RunPredict" Width="200" Command="{Binding RunPredictCommand}"/>
+                    <Button Content="LoadModel" Width="150" Command="{Binding LoadModelCommand}"/>
+                    <Button Content="LoadImage" Width="150" Command="{Binding LoadImageCommand}"/>
+                    <Button Content="RunPredict" Width="150" Command="{Binding RunPredictCommand}"/>
                     <TextBlock Text="{Binding LoadedImage, Converter={converter:PathToFileName}}"/>
                 </StackPanel>
                 <component:ImageViewer ImageSource="{Binding ImageData}" Background="Black" Cursor="Hand" Stretch="UniformToFill"/>
             </StackPanel>
         </Grid>
 
-        <ListView Grid.Row="1" ItemsSource="{Binding LogInstance.LogList}" Background="Transparent"/>
+        <Grid Grid.Row="1">
+            <GroupBox Header="Manage model" Margin="5">
+                <StackPanel>
+                    <Button Content="SetDataPath" Width="200" Command="{Binding SetDataPathCommand}"/>
+                    <TextBlock Text="{Binding DataPath}"/>
+                    <Button Content="Retrain and Make Model" Width="200" Command="{Binding RetrainCommand}"/>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+
+        <ListView Grid.Row="2" ItemsSource="{Binding LogInstance.LogList}" Background="Transparent"/>
     </Grid>
 </UserControl>

@@ -12,4 +12,8 @@
     <PackageReference Include="TorchSharp-cpu" Version="0.101.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
 </Project>

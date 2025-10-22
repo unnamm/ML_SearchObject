@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace Common
 {
@@ -19,6 +20,8 @@ namespace Common
 
         private string _fileName = string.Empty;
         private DateTime _beforeDay;
+        private ConcurrentQueue<string> _waitMessage = [];
+        private CancellationTokenSource _cts;
 
         public Log(DataYaml config)
         {
@@ -39,6 +42,38 @@ namespace Common
             }
 
             _fileName = Path.Combine(_config.LogFolderName, _beforeDay.ToString("yyyy-MM-dd") + ".txt");
+
+            _cts?.Cancel();
+            _cts = new();
+            _ = CheckQueue(_cts.Token);
+        }
+
+        private async Task CheckQueue(CancellationToken token)
+        {
+            try
+            {
+                while (true)
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    await Task.Delay(100, token);
+
+                    while (!_waitMessage.IsEmpty)
+                    {
+                        _waitMessage.TryDequeue(out var message);
+
+                        await File.AppendAllTextAsync(_fileName, message + Environment.NewLine, token);
+                        WeakReferenceMessenger.Default.Send(new InvokeMessage(WriteUICollection, message!));
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
         }
 
         /// <summary>
@@ -52,11 +87,7 @@ namespace Common
                 Initialize();
             }
 
-            message = $"[{DateTime.Now:HH:mm:ss.f}] {message}";
-
-            File.AppendAllText(_fileName, message + Environment.NewLine);
-
-            WeakReferenceMessenger.Default.Send(new InvokeMessage(WriteUICollection, message));
+            _waitMessage.Enqueue($"[{DateTime.Now:HH:mm:ss.f}] {message}{Environment.NewLine}");
         }
 
         private void WriteUICollection(string message)
